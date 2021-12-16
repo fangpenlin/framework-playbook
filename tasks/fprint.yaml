@@ -133,3 +133,17 @@
       path: "{{ tempdir.path }}"
       state: absent
     become: true
+
+# ref:
+# https://gitlab.freedesktop.org/libfprint/fprintd/-/blob/6981e033be150d232e5282d071885549c7efd6b4/pam/README
+- name: Add pam common-auth rule for pam_fprintd
+  community.general.pamd:
+    name: common-auth
+    state: before
+    type: auth
+    module_path: pam_unix.so
+    control: "[success=1 default=ignore]"
+    new_type: auth
+    new_module_path: pam_fprintd.so
+    new_control: sufficient
+  become: true
