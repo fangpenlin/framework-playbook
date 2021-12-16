@@ -3,6 +3,7 @@
 
   vars:
     libfprint_ver: "1.94.2"
+    fprintd_ver: "1.94.1"
 
   tasks:
   - import_tasks: tasks/wifi.yaml

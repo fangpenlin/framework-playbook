@@ -1,8 +1,13 @@
 ---
 
+# Thanks to Davis_Ladd's guide
+# ref:
+# https://community.frame.work/t/fingerprint-scanner-compatibility-with-linux-ubuntu-fedora-etc/1501/18
+
 - name: "Install dependencies"
   apt:
     name:
+    - python3-pypamtest
     - build-essential
     - python3-pip
     - ninja-build
@@ -10,15 +15,29 @@
     - libglib2.0-dev
     - libgusb-dev
     - libgirepository1.0-dev
+    - libpamtest0-dev
+    - libpolkit-gobject-1-dev
+    - libsystemd-dev
+    - libpam0g-dev
+    - libpam-wrapper
+    - libpolkit-gobject-1-dev
+    - libxml2-utils
   become: true
 
-- name: "Install meson"
+- name: "Install meson and Python dependencies"
   pip:
     name:
     - meson
+    - gobject
+    - python-dbusmock
     extra_args: --user
 
-- name: "Build fprintd"
+- name: "Check libfprint exists or not"
+  command:
+    cmd: pkg-config --exists libfprint-2
+  register: libfprint_pkgconfig
+
+- name: "Install libfprint"
   block:
   - name: "Create temp dir"
     tempfile:
@@ -31,21 +50,62 @@
       dest: "{{ tempdir.path }}"
       remote_src: true
 
-  - name: "Meson Configure libfprint"
+  - name: "Meson Configure"
     command:
+      # We only need goodixmoc
       cmd: meson build -Ddrivers=goodixmoc
       chdir: "{{ tempdir.path }}/libfprint-v{{ libfprint_ver }}"
 
-  - name: "Meson Build libfprint"
+  - name: "Meson Build"
     command:
       cmd: meson compile
       chdir: "{{ tempdir.path }}/libfprint-v{{ libfprint_ver }}/build"
 
-
-  - name: "Meson Install libfprint"
+  - name: "Meson Install"
     command:
       cmd: meson install
       chdir: "{{ tempdir.path }}/libfprint-v{{ libfprint_ver }}/build"
+    environment:
+      # Need this for ~/.local/bin to be present for sudo
+      PATH: "{{ ansible_facts.env.PATH }}"
+      # Need this for meson script to find mesonbuild python module with sudo
+      PYTHONPATH: "{{ ansible_facts.env.HOME }}/.local/lib/python3.9/site-packages"
+    become: true
+  always:
+  - name: "Remove temp dir"
+    file:
+      path: "{{ tempdir.path }}"
+      state: absent
+    become: true
+  when: libfprint_pkgconfig.rc == 1
+
+- name: "Install fprintd"
+  block:
+  - name: "Create temp dir"
+    tempfile:
+       state: directory
+    register: tempdir
+
+  - name: "Download Source Code"
+    unarchive:
+      src: "https://gitlab.freedesktop.org/libfprint/fprintd/-/archive/v{{ fprintd_ver }}/fprintd-v{{ fprintd_ver }}.tar.gz"
+      dest: "{{ tempdir.path }}"
+      remote_src: true
+
+  - name: "Meson Configure"
+    command:
+      cmd: meson build
+      chdir: "{{ tempdir.path }}/fprintd-v{{ fprintd_ver }}"
+
+  - name: "Meson Build"
+    command:
+      cmd: meson compile
+      chdir: "{{ tempdir.path }}/fprintd-v{{ fprintd_ver }}/build"
+
+  - name: "Meson Install"
+    command:
+      cmd: meson install
+      chdir: "{{ tempdir.path }}/fprintd-v{{ fprintd_ver }}/build"
     environment:
       # Need this for ~/.local/bin to be present for sudo
       PATH: "{{ ansible_facts.env.PATH }}"
@@ -59,4 +119,3 @@
       path: "{{ tempdir.path }}"
       state: absent
     become: true
-
