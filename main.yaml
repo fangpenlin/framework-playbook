@@ -1,0 +1,10 @@
+---
+- hosts: all
+
+  tasks:
+  - name: "Download and install WiFi Driver"
+    unarchive:
+      src: "https://wireless.wiki.kernel.org/_media/en/users/drivers/iwlwifi-ty-59.601f3a66.0.tgz"
+      dest: "/lib/firmware"
+      remote_src: true
+
