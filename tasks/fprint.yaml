@@ -1,12 +1,21 @@
 ---
 
-# Thanks to Davis_Ladd's guide
-# ref:
-# https://community.frame.work/t/fingerprint-scanner-compatibility-with-linux-ubuntu-fedora-etc/1501/18
+- name: "Uninstall old fprint packages"
+  apt:
+    name:
+    - fprintd
+    - libfprint-2-2
+    - libfprint-2-dev
+    - libfprint-dev
+    state: absent
+  become: true
 
 - name: "Install dependencies"
   apt:
     name:
+    # Thanks to Davis_Ladd's guide
+    # ref:
+    # https://community.frame.work/t/fingerprint-scanner-compatibility-with-linux-ubuntu-fedora-etc/1501/18
     - python3-pypamtest
     - build-essential
     - python3-pip
@@ -22,6 +31,7 @@
     - libpam-wrapper
     - libpolkit-gobject-1-dev
     - libxml2-utils
+    - gettext
   become: true
 
 - name: "Install meson and Python dependencies"
@@ -96,6 +106,10 @@
     command:
       cmd: meson build
       chdir: "{{ tempdir.path }}/fprintd-v{{ fprintd_ver }}"
+    environment:
+      # Since the typelib is installed in a non-standard typelib search path, we need to set it here
+      # to make it works
+      GI_TYPELIB_PATH: /usr/local/lib/x86_64-linux-gnu/girepository-1.0:/usr/lib/girepository-1.0
 
   - name: "Meson Build"
     command:
