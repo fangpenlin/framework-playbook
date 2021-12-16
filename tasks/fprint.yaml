@@ -3,11 +3,13 @@
 - name: "Install dependencies"
   apt:
     name:
+    - build-essential
     - python3-pip
     - ninja-build
+    - gtk-doc-tools
     - libglib2.0-dev
     - libgusb-dev
-    - gobject-introspection
+    - libgirepository1.0-dev
   become: true
 
 - name: "Install meson"
@@ -27,12 +29,21 @@
     unarchive:
       src: "https://gitlab.freedesktop.org/libfprint/libfprint/-/archive/v1.94.2/libfprint-v1.94.2.tar.gz"
       dest: "{{ tempdir.path }}"
-    when: false
 
-  - name: "Build libfprint"
+  - name: "Meson Configure libfprint"
     command:
-      cmd: meson build
+      cmd: meson build -Ddrivers=goodixmoc
       chdir: "{{ tempdir.path }}/libfprint-v1.94.2"
+
+  - name: "Meson Build libfprint"
+    command:
+      cmd: meson compile
+      chdir: "{{ tempdir.path }}/libfprint-v1.94.2/build"
+
+  - name: "Meson Install libfprint"
+    command:
+      cmd: meson install
+      chdir: "{{ tempdir.path }}/libfprint-v1.94.2/build"
 
   always:
   - name: "Remove temp dir"
