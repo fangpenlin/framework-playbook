@@ -1,0 +1,42 @@
+---
+
+- name: "Install dependencies"
+  apt:
+    name:
+    - python3-pip
+    - ninja-build
+    - libglib2.0-dev
+    - libgusb-dev
+    - gobject-introspection
+  become: true
+
+- name: "Install meson"
+  pip:
+    name:
+    - meson
+    extra_args: --user
+
+- name: "Build fprintd"
+  block:
+  - name: "Create temp dir"
+    tempfile:
+       state: directory
+    register: tempdir
+
+  - name: "Download Source Code"
+    unarchive:
+      src: "https://gitlab.freedesktop.org/libfprint/libfprint/-/archive/v1.94.2/libfprint-v1.94.2.tar.gz"
+      dest: "{{ tempdir.path }}"
+    when: false
+
+  - name: "Build libfprint"
+    command:
+      cmd: meson build
+      chdir: "{{ tempdir.path }}/libfprint-v1.94.2"
+
+  always:
+  - name: "Remove temp dir"
+    file:
+      path: "{{ tempdir.path }}"
+      state: absent
+

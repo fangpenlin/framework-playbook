@@ -5,6 +5,9 @@
   - import_tasks: tasks/wifi.yaml
     tags: ['wifi']
 
+  - import_tasks: tasks/fprint.yaml
+    tags: ['fprint']
+
   handlers:
   - name: Reboot
     reboot:
