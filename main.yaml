@@ -5,3 +5,10 @@
   - import_tasks: tasks/wifi.yaml
     tags: ['wifi']
 
+  handlers:
+  - name: Reboot
+    reboot:
+    # It appears reboot only works for remote connection,
+    # not sure how to make it works for local yet
+    when: ansible_connection != 'local'
+

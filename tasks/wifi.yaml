@@ -1,5 +1,6 @@
 ---
 - name: "Install Wifi Driver"
+
   block:
   - name: "Create temp dir"
     tempfile:
@@ -16,6 +17,10 @@
     copy:
       src: "{{ tempdir.path }}/iwlwifi-ty-59.601f3a66.0/iwlwifi-ty-a0-gf-a0-59.ucode"
       dest: "/lib/firmware"
+    notify:
+    - Reboot
+    become: true
+
   always:
   - name: "Remove temp dir"
     file:
