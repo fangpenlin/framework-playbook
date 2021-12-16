@@ -27,27 +27,36 @@
 
   - name: "Download Source Code"
     unarchive:
-      src: "https://gitlab.freedesktop.org/libfprint/libfprint/-/archive/v1.94.2/libfprint-v1.94.2.tar.gz"
+      src: "https://gitlab.freedesktop.org/libfprint/libfprint/-/archive/v{{ libfprint_ver }}/libfprint-v{{ libfprint_ver }}.tar.gz"
       dest: "{{ tempdir.path }}"
+      remote_src: true
 
   - name: "Meson Configure libfprint"
     command:
       cmd: meson build -Ddrivers=goodixmoc
-      chdir: "{{ tempdir.path }}/libfprint-v1.94.2"
+      chdir: "{{ tempdir.path }}/libfprint-v{{ libfprint_ver }}"
 
   - name: "Meson Build libfprint"
     command:
       cmd: meson compile
-      chdir: "{{ tempdir.path }}/libfprint-v1.94.2/build"
+      chdir: "{{ tempdir.path }}/libfprint-v{{ libfprint_ver }}/build"
+
 
   - name: "Meson Install libfprint"
     command:
       cmd: meson install
-      chdir: "{{ tempdir.path }}/libfprint-v1.94.2/build"
+      chdir: "{{ tempdir.path }}/libfprint-v{{ libfprint_ver }}/build"
+    environment:
+      # Need this for ~/.local/bin to be present for sudo
+      PATH: "{{ ansible_facts.env.PATH }}"
+      # Need this for meson script to find mesonbuild python module with sudo
+      PYTHONPATH: "{{ ansible_facts.env.HOME }}/.local/lib/python3.9/site-packages"
+    become: true
 
   always:
   - name: "Remove temp dir"
     file:
       path: "{{ tempdir.path }}"
       state: absent
+    become: true
 

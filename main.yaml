@@ -1,6 +1,9 @@
 ---
 - hosts: all
 
+  vars:
+    libfprint_ver: "1.94.2"
+
   tasks:
   - import_tasks: tasks/wifi.yaml
     tags: ['wifi']
