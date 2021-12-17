@@ -54,3 +54,7 @@ sudo fprintd-enroll $USER
 to enroll your fingerprint.
 I don't know why the Settings > User panel is not showing the fingerprint option even after this and reboot.
 If you know why and how to fix it, please let me know.
+
+## TODO
+
+- Install gesture library
