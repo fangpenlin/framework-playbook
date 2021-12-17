@@ -7,8 +7,37 @@ Since probably all the Framework notebook owner's going to face similar issues w
 
 ## My hardware & environment (tested)
 
-For now I only run this ansible playbook against my own notebook. It may not work for your distro. Here's my environment:
+For now I only run this ansible playbook against my own notebook. It may not work for your distro or hardware, please use it at your own risk. Here's my environment:
 
 - **Distro**: Ubuntu Budgie 21.10
 - **Wifi**: Intel® Wi-Fi 6E AX210 No vPro®
+
+## Usage
+
+Install ansible via pip
+
+```bash
+sudo apt install git python3-pip
+pip3 install ansible --user
+```
+
+Ensure you have `~/.local/bin` in your `PATH` environemtn variable, then checkout the code
+
+```bash
+git clone https://github.com/fangpenlin/framework-playbook.git
+cd framework-playbook
+ansible-playbook main.yaml -K
+```
+
+Tags can be added, for example, say if you only want to install fingerprint reader, you can ru
+
+```bash
+ansible-playbook main.yaml -K -t fprint
+```
+
+or if you only want to install Wifi firmware
+
+```bash
+ansible-playbook main.yaml -K -t wifi
+```
 
