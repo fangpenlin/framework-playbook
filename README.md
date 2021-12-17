@@ -29,7 +29,7 @@ cd framework-playbook
 ansible-playbook main.yaml -K
 ```
 
-Tags can be added, for example, say if you only want to install fingerprint reader, you can ru
+Tags can be added, for example, say if you only want to install fingerprint reader, you can run
 
 ```bash
 ansible-playbook main.yaml -K -t fprint
