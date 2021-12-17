@@ -1,11 +1,17 @@
 ---
 - hosts: all
 
-  vars:
-    libfprint_ver: "1.92.1"
-    fprintd_ver: "1.92.0"
-    force_install_libfprint: false
-    force_install_fprintd: false
+  # The trick we steal from
+  # https://github.com/geerlingguy/mac-dev-playbook/blob/c42f8822dd7f82ad6ba3c95ca3a136279926c990/main.yml#L4-L12
+  vars_files:
+    - default.config.yaml
+
+  pre_tasks:
+    - name: Include playbook configuration.
+      include_vars: "{{ item }}"
+      with_fileglob:
+        - "{{ playbook_dir }}/config.yaml"
+      tags: ['always']
 
   tasks:
   - import_tasks: tasks/wifi.yaml
@@ -13,6 +19,9 @@
 
   - import_tasks: tasks/fprint.yaml
     tags: ['fprint']
+
+  - import_tasks: tasks/fusuma.yaml
+    tags: ['fusuma']
 
   handlers:
   - name: Reboot

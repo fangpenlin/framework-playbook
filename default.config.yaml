@@ -1,0 +1,9 @@
+libfprint_ver: "1.94.2"
+fprintd_ver: "1.94.1"
+force_install_libfprint: false
+force_install_fprintd: false
+
+
+fusuma:
+  users:
+  - name: "{{ ansible_user_id }}"

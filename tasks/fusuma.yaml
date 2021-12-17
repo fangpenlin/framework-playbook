@@ -1,0 +1,24 @@
+---
+# basically following guide here
+# ref: https://github.com/iberianpig/fusuma
+- name: "Install dependencies"
+  apt:
+    name:
+    - libinput-tools
+    - ruby
+  become: true
+
+- name: Install fusuma Ruby Gem
+  community.general.gem:
+    name: fusuma
+    state: present
+
+- name: Add user to input group
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    groups: input
+    append: true
+  loop: "{{ fusuma.users }}"
+  loop_control:
+    label: "{{ item.name }}"
+  become: true
