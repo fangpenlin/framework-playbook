@@ -41,3 +41,4 @@ or if you only want to install Wifi firmware
 ansible-playbook main.yaml -K -t wifi
 ```
 
+I followed the Ubuntu setup guide [here](https://community.frame.work/t/ubuntu-21-04-on-the-framework-laptop/2722) for the Wifi firmware. But later realized that my Ubuntu comes with a newer WiFi driver supports Intel® Wi-Fi 6 AX210 already, so you may not need to install the WiFi firmware.
