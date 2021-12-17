@@ -42,3 +42,15 @@ ansible-playbook main.yaml -K -t wifi
 ```
 
 I followed the Ubuntu setup guide [here](https://community.frame.work/t/ubuntu-21-04-on-the-framework-laptop/2722) for the Wifi firmware. But later realized that my Ubuntu comes with a newer WiFi driver supports Intel® Wi-Fi 6 AX210 already, so you may not need to install the WiFi firmware.
+
+### Enroll finger-print
+
+After ansible-playerbook is done, you can run
+
+```bash
+sudo fprintd-enroll $USER
+```
+
+to enroll your fingerprint.
+I don't know why the Settings > User panel is not showing the fingerprint option even after this and reboot.
+If you know why and how to fix it, please let me know.
