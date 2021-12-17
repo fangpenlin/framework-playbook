@@ -33,6 +33,7 @@
     state: directory
   become: true
   become_user: '{{ user.username }}'
+  when: not user.disable_config
   loop: "{{ fusuma.users }}"
   loop_control:
     loop_var: user
@@ -44,6 +45,7 @@
     content: "{{ user.config | default(fusuma.default_config) | to_nice_yaml  }}"
   become: true
   become_user: '{{ user.username }}'
+  when: not user.disable_config
   loop: "{{ fusuma.users }}"
   loop_control:
     loop_var: user

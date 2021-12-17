@@ -9,6 +9,8 @@ fusuma:
   - username: "{{ ansible_user_id }}"
     # Overwrite the config as if you want
     # config:
+    # Or disable the config
+    # disable_config: true
 
   default_config:
     swipe:
