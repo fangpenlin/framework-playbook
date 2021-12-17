@@ -6,4 +6,38 @@ force_install_fprintd: false
 
 fusuma:
   users:
-  - name: "{{ ansible_user_id }}"
+  - username: "{{ ansible_user_id }}"
+    # Overwrite the config as if you want
+    # config:
+
+  default_config:
+    swipe:
+      3:
+        left:
+          command: 'xdotool key alt+Shift+Tab'
+        right:
+          command: 'xdotool key alt+Tab'
+        up:
+          command: 'xdotool key super'
+        down:
+          command: 'xdotool key super'
+      4:
+        up:
+          command: 'xdotool key super+m'
+        down:
+          command: 'xdotool key super+m'
+    pinch:
+      in:
+        command: 'xdotool key super+a'
+        threshold: 0.1
+      out:
+        command: 'xdotool key super'
+        threshold: 0.1
+
+    threshold:
+      swipe: 1
+      pinch: 1
+
+    interval:
+      swipe: 1
+      pinch: 1

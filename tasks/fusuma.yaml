@@ -6,19 +6,45 @@
     name:
     - libinput-tools
     - ruby
+    - xdotool
   become: true
 
 - name: Install fusuma Ruby Gem
   community.general.gem:
     name: fusuma
     state: present
+    user_install: false
+  become: true
 
 - name: Add user to input group
   ansible.builtin.user:
-    name: "{{ item.name }}"
+    name: "{{ user.username }}"
     groups: input
     append: true
+  become: true
   loop: "{{ fusuma.users }}"
   loop_control:
-    label: "{{ item.name }}"
+    loop_var: user
+    label: "{{ user.username }}"
+
+- name: Create fusuma config folder
+  ansible.builtin.file:
+    path: "~{{ user.username }}/.config/fusuma"
+    state: directory
   become: true
+  become_user: '{{ user.username }}'
+  loop: "{{ fusuma.users }}"
+  loop_control:
+    loop_var: user
+    label: "{{ user.username }}"
+
+- name: Write fusuma config file
+  ansible.builtin.copy:
+    dest: "~{{ user.username }}/.config/fusuma/config.yml"
+    content: "{{ user.config | default(fusuma.default_config) | to_nice_yaml  }}"
+  become: true
+  become_user: '{{ user.username }}'
+  loop: "{{ fusuma.users }}"
+  loop_control:
+    loop_var: user
+    label: "{{ user.username }}"
