@@ -1,7 +1,7 @@
 # framework-playbook
 Ansible Playbook for [Framework laptop](https://frame.work/) basic setup
 
-This is a project inspired by [mac-dev-playbook](https://github.com/geerlingguy/mac-dev-playbook).
+This is a project inspired by [Jeff Geerling](https://github.com/geerlingguy)'s [mac-dev-playbook](https://github.com/geerlingguy/mac-dev-playbook).
 I want to be able to setup my Framework laptop for my Ubuntu working environment with code.
 Since probably all the Framework notebook owner's going to face similar issues while installing the required packages for Linux environment, so I think it makes sense to open source it.
 
