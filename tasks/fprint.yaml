@@ -31,6 +31,7 @@
     - libpam-wrapper
     - libpolkit-gobject-1-dev
     - libxml2-utils
+    - libdbus-1-dev
     - gettext
   become: true
 
