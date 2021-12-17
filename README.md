@@ -18,6 +18,7 @@ Currently we have two tasks
 
 - [tasks/wifi.yaml](tasks/wifi.yaml) - for Intel® Wi-Fi 6E AX210 driver installation 
 - [tasks/fprint.yaml](tasks/fprint.yaml) - for fprintd installation
+- [tasks/fusuma.yaml](tasks/fusuma.yaml) - for [fusuma](https://github.com/iberianpig/fusuma) (touchpad gesture tool) installation
 
 ## Usage
 
@@ -61,7 +62,3 @@ sudo fprintd-enroll $USER
 to enroll your fingerprint.
 I don't know why the Settings > User panel is not showing the fingerprint option even after this and reboot.
 If you know why and how to fix it, please let me know.
-
-## TODO
-
-- Install gesture library
