@@ -33,7 +33,7 @@
     state: directory
   become: true
   become_user: '{{ user.username }}'
-  when: not user.disable_config
+  when: "user.enable_config | bool"
   loop: "{{ fusuma.users }}"
   loop_control:
     loop_var: user
@@ -45,8 +45,32 @@
     content: "{{ user.config | default(fusuma.default_config) | to_nice_yaml  }}"
   become: true
   become_user: '{{ user.username }}'
-  when: not user.disable_config
+  when: "user.enable_config | bool"
   loop: "{{ fusuma.users }}"
   loop_control:
     loop_var: user
     label: "{{ user.username }}"
+
+- name: write fusuma.desktop autostart for users
+  template:
+    src: fusuma.desktop.jinja2
+    dest: '~{{ user.username }}/.config/autostart/fusuma.desktop'
+  become: yes
+  become_user: '{{ user.username }}'
+  when: "user.autostart | default(fusuma.autostart) | bool"
+  loop: "{{ fusuma.users }}"
+  loop_control:
+    loop_var: user
+    label: '{{ user.username }}'
+
+- name: remove fusuma.desktop autostart for users
+  file:
+    path: '~{{ user.username }}/.config/autostart/fusuma.desktop'
+    state: absent
+  become: yes
+  become_user: '{{ user.username }}'
+  when: "not (user.autostart | default(fusuma.autostart) | bool)"
+  loop: "{{ fusuma.users }}"
+  loop_control:
+    loop_var: user
+    label: '{{ user.username }}'

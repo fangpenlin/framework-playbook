@@ -5,20 +5,26 @@ force_install_fprintd: false
 
 
 fusuma:
+  # Autostart fusuma or not
+  autostart: true
+
   users:
+  # The default user is current one we are using for running ansible
   - username: "{{ ansible_user_id }}"
-    disable_config: true
+    enable_config: true
     # Overwrite the config as if you want
     # config:
+    # Overwrite the autostart as if you want
+    # autostart:
 
   default_config:
     # ref: https://github.com/iberianpig/fusuma/wiki/Ubuntu-OS-to-mimic-Mac-a-little
     swipe:
       3:
         left:
-          command: 'xdotool key alt+Shift+Tab'
+          command: 'xdotool key super+Page_Down'
         right:
-          command: 'xdotool key alt+Tab'
+          command: 'xdotool key super+Page_Up'
         up:
           command: 'xdotool key super'
         down:
