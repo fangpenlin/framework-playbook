@@ -12,6 +12,13 @@ For now I only run this ansible playbook against my own notebook. It may not wor
 - **Distro**: Ubuntu Budgie 21.10
 - **Wifi**: Intel® Wi-Fi 6E AX210 No vPro®
 
+## Tasks
+
+Currently we have two tasks
+
+- [tasks/wifi.yaml](tasks/wifi.yaml) - for Intel® Wi-Fi 6E AX210 driver installation 
+- [tasks/fprint.yaml](tasks/fprint.yaml) - for fprintd installation
+
 ## Usage
 
 Install ansible via pip
