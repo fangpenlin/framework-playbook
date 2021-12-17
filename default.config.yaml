@@ -7,12 +7,12 @@ force_install_fprintd: false
 fusuma:
   users:
   - username: "{{ ansible_user_id }}"
+    disable_config: true
     # Overwrite the config as if you want
     # config:
-    # Or disable the config
-    # disable_config: true
 
   default_config:
+    # ref: https://github.com/iberianpig/fusuma/wiki/Ubuntu-OS-to-mimic-Mac-a-little
     swipe:
       3:
         left:
