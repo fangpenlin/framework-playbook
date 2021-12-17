@@ -87,7 +87,12 @@
       path: "{{ tempdir.path }}"
       state: absent
     become: true
-  when: libfprint_pkgconfig.rc == 1
+  when: libfprint_pkgconfig.rc == 1 or force_install_libfprint
+
+- name: "Check fprintd exists or not"
+  ansible.builtin.stat:
+    path: /usr/local/bin/fprintd-enroll
+  register: fprintd_enroll
 
 - name: "Install fprintd"
   block:
@@ -133,6 +138,7 @@
       path: "{{ tempdir.path }}"
       state: absent
     become: true
+  when: not fprintd_enroll.stat.exists or force_install_fprintd
 
 # ref:
 # https://gitlab.freedesktop.org/libfprint/fprintd/-/blob/6981e033be150d232e5282d071885549c7efd6b4/pam/README

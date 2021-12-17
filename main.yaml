@@ -2,8 +2,10 @@
 - hosts: all
 
   vars:
-    libfprint_ver: "1.94.2"
-    fprintd_ver: "1.94.1"
+    libfprint_ver: "1.92.1"
+    fprintd_ver: "1.92.0"
+    force_install_libfprint: false
+    force_install_fprintd: false
 
   tasks:
   - import_tasks: tasks/wifi.yaml
