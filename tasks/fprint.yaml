@@ -33,6 +33,8 @@
     - libxml2-utils
     - libdbus-1-dev
     - gettext
+    - pkg-config
+    - build-essential
   become: true
 
 - name: "Install meson and Python dependencies"
@@ -44,50 +46,51 @@
     extra_args: --user
 
 - name: "Check libfprint exists or not"
-  command:
+  ansible.builtin.command:
     cmd: pkg-config --exists libfprint-2
+  ignore_errors: true
   register: libfprint_pkgconfig
 
 - name: "Install libfprint"
   block:
   - name: "Create temp dir"
-    tempfile:
+    ansible.builtin.tempfile:
        state: directory
     register: tempdir
 
   - name: "Download Source Code"
-    unarchive:
+    ansible.builtin.unarchive:
       src: "https://gitlab.freedesktop.org/libfprint/libfprint/-/archive/v{{ libfprint_ver }}/libfprint-v{{ libfprint_ver }}.tar.gz"
       dest: "{{ tempdir.path }}"
       remote_src: true
 
   - name: "Meson Configure"
-    command:
+    ansible.builtin.command:
       # We only need goodixmoc
       cmd: meson build -Ddrivers=goodixmoc
       chdir: "{{ tempdir.path }}/libfprint-v{{ libfprint_ver }}"
 
   - name: "Meson Build"
-    command:
+    ansible.builtin.command:
       cmd: meson compile
       chdir: "{{ tempdir.path }}/libfprint-v{{ libfprint_ver }}/build"
 
   - name: "Meson Install"
-    command:
+    ansible.builtin.command:
       cmd: meson install
       chdir: "{{ tempdir.path }}/libfprint-v{{ libfprint_ver }}/build"
-    environment:
-      # Need this for ~/.local/bin to be present for sudo
-      PATH: "{{ ansible_facts.env.PATH }}"
-      # Need this for meson script to find mesonbuild python module with sudo
-      PYTHONPATH: "{{ ansible_facts.env.HOME }}/.local/lib/python3.9/site-packages"
     become: true
   always:
   - name: "Remove temp dir"
-    file:
+    ansible.builtin.file:
       path: "{{ tempdir.path }}"
       state: absent
     become: true
+  environment:
+    # Need this for ~/.local/bin to be present for sudo
+    PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.PATH }}"
+    # Need this for meson script to find mesonbuild python module with sudo
+    PYTHONPATH: "{{ ansible_env.HOME }}/.local/lib/python3.9/site-packages"
   when: libfprint_pkgconfig.rc == 1 or force_install_libfprint
 
 - name: "Check fprintd exists or not"
@@ -98,18 +101,18 @@
 - name: "Install fprintd"
   block:
   - name: "Create temp dir"
-    tempfile:
+    ansible.builtin.tempfile:
        state: directory
     register: tempdir
 
   - name: "Download Source Code"
-    unarchive:
+    ansible.builtin.unarchive:
       src: "https://gitlab.freedesktop.org/libfprint/fprintd/-/archive/v{{ fprintd_ver }}/fprintd-v{{ fprintd_ver }}.tar.gz"
       dest: "{{ tempdir.path }}"
       remote_src: true
 
   - name: "Meson Configure"
-    command:
+    ansible.builtin.command:
       cmd: meson build
       chdir: "{{ tempdir.path }}/fprintd-v{{ fprintd_ver }}"
     environment:
@@ -118,27 +121,27 @@
       GI_TYPELIB_PATH: /usr/local/lib/x86_64-linux-gnu/girepository-1.0:/usr/lib/girepository-1.0
 
   - name: "Meson Build"
-    command:
+    ansible.builtin.command:
       cmd: meson compile
       chdir: "{{ tempdir.path }}/fprintd-v{{ fprintd_ver }}/build"
 
   - name: "Meson Install"
-    command:
+    ansible.builtin.command:
       cmd: meson install
       chdir: "{{ tempdir.path }}/fprintd-v{{ fprintd_ver }}/build"
-    environment:
-      # Need this for ~/.local/bin to be present for sudo
-      PATH: "{{ ansible_facts.env.PATH }}"
-      # Need this for meson script to find mesonbuild python module with sudo
-      PYTHONPATH: "{{ ansible_facts.env.HOME }}/.local/lib/python3.9/site-packages"
     become: true
 
   always:
   - name: "Remove temp dir"
-    file:
+    ansible.builtin.file:
       path: "{{ tempdir.path }}"
       state: absent
     become: true
+  environment:
+    # Need this for ~/.local/bin to be present for sudo
+    PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.PATH }}"
+    # Need this for meson script to find mesonbuild python module with sudo
+    PYTHONPATH: "{{ ansible_env.HOME }}/.local/lib/python3.9/site-packages"
   when: not fprintd_enroll.stat.exists or force_install_fprintd
 
 # ref:
