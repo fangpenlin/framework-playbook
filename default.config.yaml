@@ -1,51 +1,6 @@
-libfprint_ver: "1.94.2"
-fprintd_ver: "1.94.1"
-force_install_libfprint: false
-force_install_fprintd: false
-
-
-fusuma:
-  # Autostart fusuma or not
-  autostart: true
-
-  users:
-  # The default user is current one we are using for running ansible
-  - username: "{{ ansible_user_id }}"
-    enable_config: true
-    # Overwrite the config as if you want
-    # config:
-    # Overwrite the autostart as if you want
-    # autostart:
-
-  default_config:
-    # ref: https://github.com/iberianpig/fusuma/wiki/Ubuntu-OS-to-mimic-Mac-a-little
-    swipe:
-      3:
-        left:
-          command: 'xdotool key super+Page_Down'
-        right:
-          command: 'xdotool key super+Page_Up'
-        up:
-          command: 'xdotool key super'
-        down:
-          command: 'xdotool key super'
-      4:
-        up:
-          command: 'xdotool key super+m'
-        down:
-          command: 'xdotool key super+m'
-    pinch:
-      in:
-        command: 'xdotool key super+a'
-        threshold: 0.1
-      out:
-        command: 'xdotool key super'
-        threshold: 0.1
-
-    threshold:
-      swipe: 1
-      pinch: 1
-
-    interval:
-      swipe: 1
-      pinch: 1
+fprint:
+  libfprint_ver: "1.94.2"
+  fprintd_ver: "1.94.1"
+  force_install_libfprint: false
+  force_install_fprintd: false
+  install_pam: false

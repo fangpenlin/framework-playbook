@@ -1,48 +1,47 @@
 ---
-
 - name: "Uninstall old fprint packages"
-  apt:
+  ansible.builtin.apt:
     name:
-    - fprintd
-    - libfprint-2-2
-    - libfprint-2-dev
-    - libfprint-dev
+      - fprintd
+      - libfprint-2-2
+      - libfprint-2-dev
+      - libfprint-dev
     state: absent
   become: true
 
 - name: "Install dependencies"
-  apt:
+  ansible.builtin.apt:
     name:
-    # Thanks to Davis_Ladd's guide
-    # ref:
-    # https://community.frame.work/t/fingerprint-scanner-compatibility-with-linux-ubuntu-fedora-etc/1501/18
-    - python3-pypamtest
-    - build-essential
-    - python3-pip
-    - ninja-build
-    - gtk-doc-tools
-    - libglib2.0-dev
-    - libgusb-dev
-    - libgirepository1.0-dev
-    - libpamtest0-dev
-    - libpolkit-gobject-1-dev
-    - libsystemd-dev
-    - libpam0g-dev
-    - libpam-wrapper
-    - libpolkit-gobject-1-dev
-    - libxml2-utils
-    - libdbus-1-dev
-    - gettext
-    - pkg-config
-    - build-essential
+      # Thanks to Davis_Ladd's guide
+      # ref:
+      # https://community.frame.work/t/fingerprint-scanner-compatibility-with-linux-ubuntu-fedora-etc/1501/18
+      - python3-pypamtest
+      - build-essential
+      - python3-pip
+      - ninja-build
+      - gtk-doc-tools
+      - libglib2.0-dev
+      - libgusb-dev
+      - libgirepository1.0-dev
+      - libpamtest0-dev
+      - libpolkit-gobject-1-dev
+      - libsystemd-dev
+      - libpam0g-dev
+      - libpam-wrapper
+      - libpolkit-gobject-1-dev
+      - libxml2-utils
+      - libdbus-1-dev
+      - gettext
+      - pkg-config
+      - build-essential
   become: true
 
 - name: "Install meson and Python dependencies"
-  pip:
+  ansible.builtin.pip:
     name:
-    - meson
-    - gobject
-    - python-dbusmock
+      - meson
+      - gobject
+      - python-dbusmock
     extra_args: --user
 
 - name: "Check libfprint exists or not"
@@ -53,45 +52,45 @@
 
 - name: "Install libfprint"
   block:
-  - name: "Create temp dir"
-    ansible.builtin.tempfile:
-       state: directory
-    register: tempdir
+    - name: "Create temp dir"
+      ansible.builtin.tempfile:
+        state: directory
+      register: tempdir
 
-  - name: "Download Source Code"
-    ansible.builtin.unarchive:
-      src: "https://gitlab.freedesktop.org/libfprint/libfprint/-/archive/v{{ libfprint_ver }}/libfprint-v{{ libfprint_ver }}.tar.gz"
-      dest: "{{ tempdir.path }}"
-      remote_src: true
+    - name: "Download Source Code"
+      ansible.builtin.unarchive:
+        src: "https://gitlab.freedesktop.org/libfprint/libfprint/-/archive/v{{ fprint.libfprint_ver }}/libfprint-v{{ fprint.libfprint_ver }}.tar.gz"
+        dest: "{{ tempdir.path }}"
+        remote_src: true
 
-  - name: "Meson Configure"
-    ansible.builtin.command:
-      # We only need goodixmoc
-      cmd: meson build -Ddrivers=goodixmoc
-      chdir: "{{ tempdir.path }}/libfprint-v{{ libfprint_ver }}"
+    - name: "Meson Configure"
+      ansible.builtin.command:
+        # We only need goodixmoc
+        cmd: meson build -Ddrivers=goodixmoc
+        chdir: "{{ tempdir.path }}/libfprint-v{{ fprint.libfprint_ver }}"
 
-  - name: "Meson Build"
-    ansible.builtin.command:
-      cmd: meson compile
-      chdir: "{{ tempdir.path }}/libfprint-v{{ libfprint_ver }}/build"
+    - name: "Meson Build"
+      ansible.builtin.command:
+        cmd: meson compile
+        chdir: "{{ tempdir.path }}/libfprint-v{{ fprint.libfprint_ver }}/build"
 
-  - name: "Meson Install"
-    ansible.builtin.command:
-      cmd: meson install
-      chdir: "{{ tempdir.path }}/libfprint-v{{ libfprint_ver }}/build"
-    become: true
+    - name: "Meson Install"
+      ansible.builtin.command:
+        cmd: meson install
+        chdir: "{{ tempdir.path }}/libfprint-v{{ fprint.libfprint_ver }}/build"
+      become: true
   always:
-  - name: "Remove temp dir"
-    ansible.builtin.file:
-      path: "{{ tempdir.path }}"
-      state: absent
-    become: true
+    - name: "Remove temp dir"
+      ansible.builtin.file:
+        path: "{{ tempdir.path }}"
+        state: absent
+      become: true
   environment:
     # Need this for ~/.local/bin to be present for sudo
     PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.PATH }}"
     # Need this for meson script to find mesonbuild python module with sudo
     PYTHONPATH: "{{ ansible_env.HOME }}/.local/lib/python3.9/site-packages"
-  when: libfprint_pkgconfig.rc == 1 or force_install_libfprint
+  when: libfprint_pkgconfig.rc == 1 or fprint.force_install_libfprint
 
 - name: "Check fprintd exists or not"
   ansible.builtin.stat:
@@ -100,49 +99,49 @@
 
 - name: "Install fprintd"
   block:
-  - name: "Create temp dir"
-    ansible.builtin.tempfile:
-       state: directory
-    register: tempdir
+    - name: "Create temp dir"
+      ansible.builtin.tempfile:
+        state: directory
+      register: tempdir
 
-  - name: "Download Source Code"
-    ansible.builtin.unarchive:
-      src: "https://gitlab.freedesktop.org/libfprint/fprintd/-/archive/v{{ fprintd_ver }}/fprintd-v{{ fprintd_ver }}.tar.gz"
-      dest: "{{ tempdir.path }}"
-      remote_src: true
+    - name: "Download Source Code"
+      ansible.builtin.unarchive:
+        src: "https://gitlab.freedesktop.org/libfprint/fprintd/-/archive/v{{ fprint.fprintd_ver }}/fprintd-v{{ fprint.fprintd_ver }}.tar.gz"
+        dest: "{{ tempdir.path }}"
+        remote_src: true
 
-  - name: "Meson Configure"
-    ansible.builtin.command:
-      cmd: meson build
-      chdir: "{{ tempdir.path }}/fprintd-v{{ fprintd_ver }}"
-    environment:
-      # Since the typelib is installed in a non-standard typelib search path, we need to set it here
-      # to make it works
-      GI_TYPELIB_PATH: /usr/local/lib/x86_64-linux-gnu/girepository-1.0:/usr/lib/girepository-1.0
+    - name: "Meson Configure"
+      ansible.builtin.command:
+        cmd: meson build
+        chdir: "{{ tempdir.path }}/fprintd-v{{ fprint.fprintd_ver }}"
+      environment:
+        # Since the typelib is installed in a non-standard typelib search path, we need to set it here
+        # to make it works
+        GI_TYPELIB_PATH: /usr/local/lib/x86_64-linux-gnu/girepository-1.0:/usr/lib/girepository-1.0
 
-  - name: "Meson Build"
-    ansible.builtin.command:
-      cmd: meson compile
-      chdir: "{{ tempdir.path }}/fprintd-v{{ fprintd_ver }}/build"
+    - name: "Meson Build"
+      ansible.builtin.command:
+        cmd: meson compile
+        chdir: "{{ tempdir.path }}/fprintd-v{{ fprint.fprintd_ver }}/build"
 
-  - name: "Meson Install"
-    ansible.builtin.command:
-      cmd: meson install
-      chdir: "{{ tempdir.path }}/fprintd-v{{ fprintd_ver }}/build"
-    become: true
+    - name: "Meson Install"
+      ansible.builtin.command:
+        cmd: meson install
+        chdir: "{{ tempdir.path }}/fprintd-v{{ fprint.fprintd_ver }}/build"
+      become: true
 
   always:
-  - name: "Remove temp dir"
-    ansible.builtin.file:
-      path: "{{ tempdir.path }}"
-      state: absent
-    become: true
+    - name: "Remove temp dir"
+      ansible.builtin.file:
+        path: "{{ tempdir.path }}"
+        state: absent
+      become: true
   environment:
     # Need this for ~/.local/bin to be present for sudo
     PATH: "{{ ansible_env.HOME }}/.local/bin:{{ ansible_env.PATH }}"
     # Need this for meson script to find mesonbuild python module with sudo
     PYTHONPATH: "{{ ansible_env.HOME }}/.local/lib/python3.9/site-packages"
-  when: not fprintd_enroll.stat.exists or force_install_fprintd
+  when: not fprintd_enroll.stat.exists or fprint.force_install_fprintd
 
 # ref:
 # https://gitlab.freedesktop.org/libfprint/fprintd/-/blob/6981e033be150d232e5282d071885549c7efd6b4/pam/README
@@ -156,4 +155,5 @@
     new_type: auth
     new_module_path: pam_fprintd.so
     new_control: sufficient
+  when: fprint.install_pam
   become: true

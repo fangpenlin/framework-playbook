@@ -20,9 +20,6 @@
   - import_tasks: tasks/fprint.yaml
     tags: ['fprint']
 
-  - import_tasks: tasks/fusuma.yaml
-    tags: ['fusuma']
-
   handlers:
   - name: Reboot
     reboot:

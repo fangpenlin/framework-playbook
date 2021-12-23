@@ -1,29 +1,27 @@
 ---
 - name: "Install Wifi Driver"
-
   block:
-  - name: "Create temp dir"
-    tempfile:
-      state: directory
-    register: tempdir
+    - name: "Create temp dir"
+      ansible.builtin.tempfile:
+        state: directory
+      register: tempdir
 
-  - name: "Download WiFi Firmware"
-    unarchive:
-      src: "https://wireless.wiki.kernel.org/_media/en/users/drivers/iwlwifi-ty-59.601f3a66.0.tgz"
-      dest: "{{ tempdir.path }}"
-      remote_src: true
+    - name: "Download WiFi Firmware"
+      ansible.builtin.unarchive:
+        src: "https://wireless.wiki.kernel.org/_media/en/users/drivers/iwlwifi-ty-59.601f3a66.0.tgz"
+        dest: "{{ tempdir.path }}"
+        remote_src: true
 
-  - name: "Copy WiFi Firmware"
-    copy:
-      src: "{{ tempdir.path }}/iwlwifi-ty-59.601f3a66.0/iwlwifi-ty-a0-gf-a0-59.ucode"
-      dest: "/lib/firmware"
-    notify:
-    - Reboot
-    become: true
+    - name: "Copy WiFi Firmware"
+      ansible.builtin.copy:
+        src: "{{ tempdir.path }}/iwlwifi-ty-59.601f3a66.0/iwlwifi-ty-a0-gf-a0-59.ucode"
+        dest: "/lib/firmware"
+      notify:
+        - Reboot
+      become: true
 
   always:
-  - name: "Remove temp dir"
-    file:
-      path: "{{ tempdir.path }}"
-      state: absent
-
+    - name: "Remove temp dir"
+      file:
+        path: "{{ tempdir.path }}"
+        state: absent

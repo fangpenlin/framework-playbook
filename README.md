@@ -12,13 +12,14 @@ For now I only run this ansible playbook against my own notebook. **It may not w
 - **Distro**: Ubuntu Budgie 21.10
 - **Wifi**: Intel® Wi-Fi 6E AX210 No vPro®
 
+Update: I switch to [Pop! OS](https://pop.system76.com/) (yet another Ubuntu based distro) instead, the playbook appears to be working as well.
+
 ## Tasks
 
 Currently we have two tasks
 
 - [tasks/wifi.yaml](tasks/wifi.yaml) - for Intel® Wi-Fi 6E AX210 driver installation 
 - [tasks/fprint.yaml](tasks/fprint.yaml) - for fprintd installation
-- [tasks/fusuma.yaml](tasks/fusuma.yaml) - for [fusuma](https://github.com/iberianpig/fusuma) (touchpad gesture tool) installation
 
 ## Usage
 
